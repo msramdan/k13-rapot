@@ -27,7 +27,7 @@ class Cetak_raport extends CI_Controller {
     }
 
     public function sampul1($id_siswa) {
-        $d['ds'] = $this->db->query("SELECT nama, nis, nisn FROM m_siswa WHERE id = '$id_siswa'")->row_array();
+        $d['ds'] = $this->db->query("SELECT nama, nis, nisn,qr_code FROM m_siswa WHERE id = '$id_siswa'")->row_array();
 
         $this->load->view('cetak_sampul1', $d);
 
@@ -586,6 +586,7 @@ class Cetak_raport extends CI_Controller {
                                     LEFT JOIN m_siswa c ON a.id_siswa = c.id
                                     WHERE a.id_siswa = $id_siswa AND a.ta = '$tasm'")->result_array();
         $d['prestasi'] = $q_prestasi;
+        $d['ds'] = $this->db->query("SELECT * FROM m_siswa WHERE id = '$id_siswa'")->row_array();
 
         $this->load->view('cetak_rapot', $d);
     }

@@ -76,5 +76,6 @@
 		<b><u><?php echo $tasm['nama_kepsek']; ?></u></b><br>
 		NIP. <?php echo $tasm['nip_kepsek']; ?>
 	</div>
+	<img style="position: absolute;margin-left: 100px;margin-top: 160px;" src="<?= base_url('aset/qr/' .$ds['qr_code']); ?>" width="120px" height="120px">
 </body>
 </html>

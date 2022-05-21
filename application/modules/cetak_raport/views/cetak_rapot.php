@@ -419,8 +419,8 @@
 
 			</td>
 		</tr>
-
 		</tbody>
 	</table>
+	<img style="position: absolute;margin-left: 700px;margin-top: 90px;" src="<?= base_url('aset/qr/' .$ds['qr_code']); ?>" width="120px" height="120px">
 </body>
 </html>

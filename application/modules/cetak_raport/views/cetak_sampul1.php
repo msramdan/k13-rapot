@@ -36,21 +36,12 @@
 
 <body>
 	<center>
+	<img style="position: absolute;margin-left: -330px;margin-top: 15px;" src="<?= base_url('aset/qr/' .$ds['qr_code']); ?>" width="120px" height="120px">
+
 		<br><br><br><br>
 		<img src="<?php echo base_url(); ?>aset/img/logo_garuda.jpg"><br><br><br>
 		<span style="font-size: 14pt"><b style="font-size: 18pt">LAPORAN</b><br>
 			HASIL PENCAPAIAN KOMPETENSI PESERTA DIDIK<br>
-
-			<td>
-				<?php
-				$nama = "ramdan";
-				require 'vendor/autoload.php'; // load folder vendor/autoload
-				$qrCode = new Endroid\QrCode\QrCode($nama); // mengambil data kode siswa sebagai data  QR code
-				$qrCode->writeFile('./QRcode/' . $nama . '.png'); // direktori untuk menyimpan gambar QR code
-				?>
-				<!-- tampilkan gambar QR code -->
-				<img src="<?= base_url('./QRcode/' . $nama . '.png') ?>" alt="QRcode-siswa" width="100px">
-			</td>
 
 
 			<?php echo strtoupper($this->config->item('nama_sekolah')); ?>
@@ -59,7 +50,7 @@
 		<br>
 		<br>
 		<br>
-		<br>
+		<br> 
 		<img src="<?php echo base_url(); ?>aset/img/<?php echo ($this->config->item('logo')); ?>.jpg"><br>
 		<br>
 		<br>

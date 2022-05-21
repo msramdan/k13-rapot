@@ -202,14 +202,18 @@ class Data_siswa extends CI_Controller
             $config['white']        = array(70, 130, 180); // array, default is array(0,0,0)
             $this->ciqrcode->initialize($config);
 
-            $image_name = $data['nama'] . '-' . $data['nisn'] . '.png'; //buat name dari qr code sesuai dengan nim
+            $image_name = $data['nama'] . '-' . $data['nisn']; //buat name dari qr code sesuai dengan nim
             $dataGenerate = 'Nama Siswa : ' . $data['nama'] . ' NISN : ' . $data['nisn'];
             $params['data'] = $dataGenerate; //data yang akan di jadikan QR CODE
             $params['level'] = 'H'; //H=High
             $params['size'] = 10;
-            $params['savename'] = FCPATH . $config['imagedir'] . $image_name; //simpan image QR CODE ke folder assets/images/
+            $params['savename'] = FCPATH . $config['imagedir'] . slugify($image_name).'.png'; //simpan image QR CODE ke folder assets/images/
             $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
-            $data['qr_code'] = $image_name;
+            $data['qr_code'] = slugify($image_name). '.png';
+            // $test = slugify($image_name);
+            // var_dump($test);
+            // die();
+
 
             $this->db->where('id', $p['_id']);
             $this->db->update('m_siswa', $data);
