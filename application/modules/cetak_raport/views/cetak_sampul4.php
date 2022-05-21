@@ -3,7 +3,7 @@
 <head>
 	<title>Cetak Raport</title>
 	<style type="text/css">
-		body {font-family: arial; font-size: 12pt; width: 8.5in; height: 12.5in; border: solid 2px #000; padding: 30px 10px}
+		body {font-family: arial; font-size: 12pt; width: 8.5in; height: 11.69in; border: solid 2px #000; padding: 30px 10px}
 		.table {border-collapse: collapse; border: solid 1px #999; width:100%}
 		.table tr td, .table tr th {border:  solid 1px #999; padding: 3px; font-size: 12px}
 		.rgt {text-align: right;}
@@ -63,7 +63,7 @@
 		</td>
 		</tr>		
 	</table>
-	<br><br>
+	<br> <br>
 	<div style="margin-left: 20%; display: inline; float: left; width: 3cm; height: 3.7cm; border: solid 1px #000"></div>
 	<div style="margin-left: 120px; display: inline; float: left;">
 		Tasikmalaya, <?php echo tjs($ds['diterima_tgl'],"l"); ?><br>
@@ -72,10 +72,9 @@
 		<br>
 		<br>
 		<br>
+		<br>
 		<b><u><?php echo $tasm['nama_kepsek']; ?></u></b><br>
 		NIP. <?php echo $tasm['nip_kepsek']; ?>
 	</div>
-
-	
 </body>
 </html>

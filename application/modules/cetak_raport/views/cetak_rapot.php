@@ -27,7 +27,7 @@
                 setTimeout("CheckWindowState()", 1000)
             }
         }
-        // PrintWindow();
+        PrintWindow();
     </script> 
 </head>
 <body>
@@ -362,23 +362,23 @@
 		<tr>
 			<td colspan="6">
 				<br><br>
-				<table width="100%">
+				<table width="100%" >
 					<tr>
-						<td width="8%"></td>
-						<td width="20%">
+						<td width="5%"></td>
+						<td width="30%">
 							Mengetahui : <br>
 							Orang Tua/Wali, <br>
 							<br><br><br><br>
 							<u>..........................</u>
 						</td>
-						<td width="8%"></td>
-						<td width="31%">
+						<td width="30%"></td>
+						<!-- <td width="31%">
 						    
 							Kepala <?php echo $this->config->item('nama_sekolah'); ?> <br>
 							<br><br><br><br><br>
 							<u><b><?php echo $det_raport['nama_kepsek']; ?></b></u><br>
 							NIP. <?php echo $det_raport['nip_kepsek']; ?>
-						</td>
+						</td> -->
 						<td width="25%">
 						<?php 
 						    if ($wali_kelas['tingkat'] != 9) {
@@ -392,7 +392,27 @@
 							<u><b><?php echo $wali_kelas['nmguru']; ?></b></u><br>
 							NIP. <?php echo $wali_kelas['nip']; ?>
 						</td>
-						<td width="6%"></td>
+						<td width="5%"></td>
+						
+					</tr>
+				</table>
+
+			</td>
+		</tr>
+		<tr>
+			<td colspan="6">
+				<br><br>
+				<table width="100%" >
+					<tr>
+						<td width="35%"></td>
+						<td width="30%">
+						    
+							Kepala <?php echo $this->config->item('nama_sekolah'); ?> <br>
+							<br><br><br><br><br>
+							<u><b><?php echo $det_raport['nama_kepsek']; ?></b></u><br>
+							NIP. <?php echo $det_raport['nip_kepsek']; ?>
+						</td>
+						<td width="35%"></td>
 						
 					</tr>
 				</table>

@@ -42,6 +42,8 @@ class Cetak_raport extends CI_Controller {
     public function sampul4($id_siswa) {
         $d['ds'] = $this->db->query("SELECT * FROM m_siswa WHERE id = '$id_siswa'")->row_array();
         $d['da'] = $this->db->query("SELECT * FROM tahun WHERE aktif = 'Y'")->row_array();
+        $get_tasm = $this->db->query("SELECT tahun, nama_kepsek, nip_kepsek, tgl_raport FROM tahun WHERE aktif = 'Y'")->row_array();
+        $d['tasm'] = $get_tasm;
 
         $this->load->view('cetak_sampul4', $d);
 
