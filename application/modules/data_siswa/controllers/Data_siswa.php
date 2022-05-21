@@ -1,33 +1,36 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Data_siswa extends CI_Controller {
-    function __construct() {
+class Data_siswa extends CI_Controller
+{
+    function __construct()
+    {
         parent::__construct();
         $this->sespre = $this->config->item('session_name_prefix');
 
-        $this->d['admlevel'] = $this->session->userdata($this->sespre.'level');
+        $this->d['admlevel'] = $this->session->userdata($this->sespre . 'level');
         $this->d['url'] = "data_siswa";
         $this->d['idnya'] = "datasiswa";
         $this->d['nama_form'] = "f_datasiswa";
     }
 
-    public function datatable() {
+    public function datatable()
+    {
         $start = $this->input->post('start');
         $length = $this->input->post('length');
         $draw = $this->input->post('draw');
         $search = $this->input->post('search');
 
-        $d_total_row = $this->db->query("SELECT id FROM m_siswa WHERE nama LIKE '%".$search['value']."%' AND stat_data = 'A'")->num_rows();
-    
+        $d_total_row = $this->db->query("SELECT id FROM m_siswa WHERE nama LIKE '%" . $search['value'] . "%' AND stat_data = 'A'")->num_rows();
+
         $q_datanya = $this->db->query("SELECT a.*,
                                         (SELECT COUNT(id) FROM m_admin WHERE level = 'siswa' AND konid = a.id) AS jml_aktif
                                         FROM m_siswa a
-                                        WHERE a.nama LIKE '%".$search['value']."%' AND stat_data = 'A' 
+                                        WHERE a.nama LIKE '%" . $search['value'] . "%' AND stat_data = 'A' 
                                         ORDER BY a.nis ASC 
-                                        LIMIT ".$start.", ".$length."")->result_array();
+                                        LIMIT " . $start . ", " . $length . "")->result_array();
         $data = array();
-        $no = ($start+1);
+        $no = ($start + 1);
 
         foreach ($q_datanya as $d) {
             $data_ok = array();
@@ -35,32 +38,33 @@ class Data_siswa extends CI_Controller {
             $data_ok[1] = $d['nis'];
             $data_ok[2] = strtoupper($d['nama']);
 
-            $link_aktif_user = $d['jml_aktif'] > 0 ? '' : '<a href="#" onclick="return aktifkan(\''.$d['id'].'\');" class="btn btn-xs btn-info"><i class="fa fa-user"></i> Aktifkan User</a>';
+            $link_aktif_user = $d['jml_aktif'] > 0 ? '' : '<a href="#" onclick="return aktifkan(\'' . $d['id'] . '\');" class="btn btn-xs btn-info"><i class="fa fa-user"></i> Aktifkan User</a>';
 
-            $data_ok[3] = '<a href="'.base_url().$this->d['url'].'/edit/'.$d['id'].'" class="btn btn-xs btn-success"><i class="fa fa-edit"></i> Edit</a>
-                '.$link_aktif_user.'
-                <a href="#" onclick="return hapus(\''.$d['id'].'\');" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i> Hapus</a> ';
+            $data_ok[3] = '<a href="' . base_url() . $this->d['url'] . '/edit/' . $d['id'] . '" class="btn btn-xs btn-success"><i class="fa fa-edit"></i> Edit</a>
+                ' . $link_aktif_user . '
+                <a href="#" onclick="return hapus(\'' . $d['id'] . '\');" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i> Hapus</a> ';
 
             $data[] = $data_ok;
         }
 
         $json_data = array(
-                    "draw" => $draw,
-                    "iTotalRecords" => $d_total_row,
-                    "iTotalDisplayRecords" => $d_total_row,
-                    "data" => $data
-                );
+            "draw" => $draw,
+            "iTotalRecords" => $d_total_row,
+            "iTotalDisplayRecords" => $d_total_row,
+            "data" => $data
+        );
         j($json_data);
         exit;
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $q = $this->db->query("SELECT *, 'edit' AS mode FROM m_siswa WHERE id = '$id'")->row_array();
-        $this->d['p_jk']  = array(""=>"JK","L"=>"Laki-laki","P"=>"Perempuan");
-        $this->d['p_agama']  = array(""=>"Agama","Islam"=>"Islam","Katolik"=>"Katolik","Kristen"=>"Kristen","Hindu"=>"Hindu","Budha"=>"Budha","Konghucu"=>"Konghucu");
-        $this->d['p_status_anak']  = array(""=>"Status Anak","AK"=>"Anak Kandung","Anak Tiri"=>"Anak Tiri");
-        $this->d['p_diterima_kelas']  = array(""=>"Diterima Kelas","I"=>"I","II"=>"II", "III"=>"III", "IV"=>"IV", "V"=>"V", "VI"=>"VI" );
-        
+        $this->d['p_jk']  = array("" => "JK", "L" => "Laki-laki", "P" => "Perempuan");
+        $this->d['p_agama']  = array("" => "Agama", "Islam" => "Islam", "Katolik" => "Katolik", "Kristen" => "Kristen", "Hindu" => "Hindu", "Budha" => "Budha", "Konghucu" => "Konghucu");
+        $this->d['p_status_anak']  = array("" => "Status Anak", "AK" => "Anak Kandung", "Anak Tiri" => "Anak Tiri");
+        $this->d['p_diterima_kelas']  = array("" => "Diterima Kelas", "I" => "I", "II" => "II", "III" => "III", "IV" => "IV", "V" => "V", "VI" => "VI");
+
         if (empty($q)) {
             $this->d['data']['id'] = "";
             $this->d['data']['mode'] = "add";
@@ -105,9 +109,9 @@ class Data_siswa extends CI_Controller {
         $this->load->view("template_utama", $this->d);
     }
 
-    public function simpan() {
+    public function simpan()
+    {
         $p = $this->input->post();
-
         $data['nis'] = $p['nis'];
         $data['nisn'] = $p['nisn'];
         $data['nama'] = addslashes($p['nama']);
@@ -146,11 +150,9 @@ class Data_siswa extends CI_Controller {
         $config['max_size']         = '2000';
         $config['max_width']        = '1000';
         $config['max_height']       = '1000';
-
         $this->load->library('upload', $config);
-
-        if ( ! $this->upload->do_upload('userfile')) {
-            $this->session->set_flashdata('ue', '<div class="alert alert-danger">'.$this->upload->display_errors().'</div>');
+        if (!$this->upload->do_upload('userfile')) {
+            $this->session->set_flashdata('ue', '<div class="alert alert-danger">' . $this->upload->display_errors() . '</div>');
         } else {
             $ud = $this->upload->data();
             $data['foto'] = $ud['file_name'];
@@ -158,8 +160,57 @@ class Data_siswa extends CI_Controller {
 
 
         if ($p['_mode'] == "add") {
+            // QR CODE
+            $this->load->library('ciqrcode'); //pemanggilan library QR CODE
+            $config['cacheable']    = true; //boolean, the default is true
+            $config['cachedir']     = './aset/'; //string, the default is application/cache/
+            $config['errorlog']     = './aset/'; //string, the default is application/logs/
+            $config['imagedir']     = './aset/qr/'; //direktori penyimpanan qr code
+            $config['quality']      = true; //boolean, the default is true
+            $config['size']         = '1024'; //interger, the default is 1024
+            $config['black']        = array(224, 255, 255); // array, default is array(255,255,255)
+            $config['white']        = array(70, 130, 180); // array, default is array(0,0,0)
+            $this->ciqrcode->initialize($config);
+
+            $image_name = $data['nama'] . '-' . $data['nisn'] . '.png'; //buat name dari qr code sesuai dengan nim
+            $dataGenerate = 'Nama Siswa : ' . $data['nama'] . ' NISN : ' . $data['nisn'];
+            $params['data'] = $dataGenerate; //data yang akan di jadikan QR CODE
+            $params['level'] = 'H'; //H=High
+            $params['size'] = 10;
+            $params['savename'] = FCPATH . $config['imagedir'] . $image_name; //simpan image QR CODE ke folder assets/images/
+            $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
+            $data['qr_code'] = $image_name;
             $this->db->insert('m_siswa', $data);
         } else if ($p['_mode'] == "edit") {
+            $idSiswa = $p['_id'];
+            $row = $this->db->query("select * from m_siswa where id='$idSiswa'")->row();
+            if ($row->qr_code == null || $row->qr_code == '') {
+            } else {
+                $target_file = './aset/qr/' . $row->qr_code;
+                unlink($target_file);
+            }
+
+            // QR CODE
+            $this->load->library('ciqrcode'); //pemanggilan library QR CODE
+            $config['cacheable']    = true; //boolean, the default is true
+            $config['cachedir']     = './aset/'; //string, the default is application/cache/
+            $config['errorlog']     = './aset/'; //string, the default is application/logs/
+            $config['imagedir']     = './aset/qr/'; //direktori penyimpanan qr code
+            $config['quality']      = true; //boolean, the default is true
+            $config['size']         = '1024'; //interger, the default is 1024
+            $config['black']        = array(224, 255, 255); // array, default is array(255,255,255)
+            $config['white']        = array(70, 130, 180); // array, default is array(0,0,0)
+            $this->ciqrcode->initialize($config);
+
+            $image_name = $data['nama'] . '-' . $data['nisn'] . '.png'; //buat name dari qr code sesuai dengan nim
+            $dataGenerate = 'Nama Siswa : ' . $data['nama'] . ' NISN : ' . $data['nisn'];
+            $params['data'] = $dataGenerate; //data yang akan di jadikan QR CODE
+            $params['level'] = 'H'; //H=High
+            $params['size'] = 10;
+            $params['savename'] = FCPATH . $config['imagedir'] . $image_name; //simpan image QR CODE ke folder assets/images/
+            $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
+            $data['qr_code'] = $image_name;
+
             $this->db->where('id', $p['_id']);
             $this->db->update('m_siswa', $data);
         } else {
@@ -170,15 +221,17 @@ class Data_siswa extends CI_Controller {
         redirect($this->d['url']);
     }
 
-    public function hapus($id) {
+    public function hapus($id)
+    {
         $this->db->query("DELETE FROM m_siswa WHERE id = '$id'");
         redirect($this->d['url']);
     }
 
 
-    public function aktifkan($id) {
+    public function aktifkan($id)
+    {
 
-        $detil_data = $this->db->query("SELECT nis, nama FROM m_siswa WHERE id = '".$id."'")->row_array();
+        $detil_data = $this->db->query("SELECT nis, nama FROM m_siswa WHERE id = '" . $id . "'")->row_array();
 
         if (empty($detil_data)) {
             $d['status'] = "gagal";
@@ -187,76 +240,78 @@ class Data_siswa extends CI_Controller {
             $username = $detil_data['nis'];
             $password = sha1(sha1($username));
 
-            $this->db->query("INSERT INTO m_admin (username,password,level,konid,aktif) VALUES ('".$username."', '".$password."', 'siswa', '$id', 'Y')");
+            $this->db->query("INSERT INTO m_admin (username,password,level,konid,aktif) VALUES ('" . $username . "', '" . $password . "', 'siswa', '$id', 'Y')");
 
             $d['status'] = "ok";
-            $d['data'] = "Username : ".$username." berhasil diaktifkan..! Password default : ".$username."";
+            $d['data'] = "Username : " . $username . " berhasil diaktifkan..! Password default : " . $username . "";
         }
-        
+
         j($d);
     }
 
-    public function upload() {
+    public function upload()
+    {
         $this->d['p'] = "form_import";
         $this->load->view("template_utama", $this->d);
     }
 
-    public function import_siswa() {
+    public function import_siswa()
+    {
         $target_file = './upload/temp/';
-        move_uploaded_file($_FILES["import_excel"]["tmp_name"], $target_file."import_siswa.xls");
+        move_uploaded_file($_FILES["import_excel"]["tmp_name"], $target_file . "import_siswa.xls");
 
-        $file   = explode('.',$_FILES['import_excel']['name']);
+        $file   = explode('.', $_FILES['import_excel']['name']);
         $length = count($file);
 
-        if($file[$length -1] == 'xlsx' || $file[$length -1] == 'xls') {
+        if ($file[$length - 1] == 'xlsx' || $file[$length - 1] == 'xls') {
             //jagain barangkali uploadnya selain file excel
             $tmp    = './upload/temp/import_siswa.xls';
             //Baca dari tmp folder jadi file ga perlu jadi sampah di server :-p
-            
-            $this->load->library('excel');//Load library excelnya
+
+            $this->load->library('excel'); //Load library excelnya
             $read   = PHPExcel_IOFactory::createReaderForFile($tmp);
             $read->setReadDataOnly(true);
             $excel  = $read->load($tmp);
 
             //echo $tmp;
-    
-            $_sheet = $excel->setActiveSheetIndexByName('data_siswa');            
+
+            $_sheet = $excel->setActiveSheetIndexByName('data_siswa');
 
 
             $data = array();
 
             $no = 1;
             for ($b = 2; $b < 500; $b++) {
-                $nis = $_sheet->getCell('A'.$b)->getCalculatedValue();
-                $nisn = $_sheet->getCell('B'.$b)->getCalculatedValue();
-                $nama = addslashes($_sheet->getCell('C'.$b)->getCalculatedValue());
-                $jk = $_sheet->getCell('D'.$b)->getCalculatedValue();
-                $tmp_lahir = $_sheet->getCell('E'.$b)->getCalculatedValue();
-                $tgl_lahir = $_sheet->getCell('F'.$b)->getCalculatedValue();
-                $agama = $_sheet->getCell('G'.$b)->getCalculatedValue();
-                $status = $_sheet->getCell('H'.$b)->getCalculatedValue();
-                $anakke = $_sheet->getCell('I'.$b)->getCalculatedValue();
-                $alamat = $_sheet->getCell('J'.$b)->getCalculatedValue();
-                $notelp = $_sheet->getCell('K'.$b)->getCalculatedValue();
-                $sek_asal = $_sheet->getCell('L'.$b)->getCalculatedValue();
-                $sek_asal_alamat = $_sheet->getCell('M'.$b)->getCalculatedValue();
-                $diterima_kelas = $_sheet->getCell('N'.$b)->getCalculatedValue();
-                $diterima_tgl = $_sheet->getCell('O'.$b)->getCalculatedValue();
-                $diterima_smt = $_sheet->getCell('P'.$b)->getCalculatedValue();
-                $ijazah_no = $_sheet->getCell('Q'.$b)->getCalculatedValue();
-                $ijazah_thn = $_sheet->getCell('R'.$b)->getCalculatedValue();
-                $skhun_no = $_sheet->getCell('S'.$b)->getCalculatedValue();
-                $skhun_thn = $_sheet->getCell('T'.$b)->getCalculatedValue();
-                $ortu_ayah = $_sheet->getCell('U'.$b)->getCalculatedValue();
-                $ortu_ibu = $_sheet->getCell('V'.$b)->getCalculatedValue();
-                $ortu_alamat = $_sheet->getCell('W'.$b)->getCalculatedValue();
-                $ortu_notelp = $_sheet->getCell('X'.$b)->getCalculatedValue();
-                $ortu_ayah_pkj = $_sheet->getCell('Y'.$b)->getCalculatedValue();
-                $ortu_ibu_pkj = $_sheet->getCell('Z'.$b)->getCalculatedValue();
-                $wali = $_sheet->getCell('AA'.$b)->getCalculatedValue();
-                $wali_alamat = $_sheet->getCell('AB'.$b)->getCalculatedValue();
-                $notelp_rumah = $_sheet->getCell('AC'.$b)->getCalculatedValue();
-                $wali_pkj = $_sheet->getCell('AD'.$b)->getCalculatedValue();
+                $nis = $_sheet->getCell('A' . $b)->getCalculatedValue();
+                $nisn = $_sheet->getCell('B' . $b)->getCalculatedValue();
+                $nama = addslashes($_sheet->getCell('C' . $b)->getCalculatedValue());
+                $jk = $_sheet->getCell('D' . $b)->getCalculatedValue();
+                $tmp_lahir = $_sheet->getCell('E' . $b)->getCalculatedValue();
+                $tgl_lahir = $_sheet->getCell('F' . $b)->getCalculatedValue();
+                $agama = $_sheet->getCell('G' . $b)->getCalculatedValue();
+                $status = $_sheet->getCell('H' . $b)->getCalculatedValue();
+                $anakke = $_sheet->getCell('I' . $b)->getCalculatedValue();
+                $alamat = $_sheet->getCell('J' . $b)->getCalculatedValue();
+                $notelp = $_sheet->getCell('K' . $b)->getCalculatedValue();
+                $sek_asal = $_sheet->getCell('L' . $b)->getCalculatedValue();
+                $sek_asal_alamat = $_sheet->getCell('M' . $b)->getCalculatedValue();
+                $diterima_kelas = $_sheet->getCell('N' . $b)->getCalculatedValue();
+                $diterima_tgl = $_sheet->getCell('O' . $b)->getCalculatedValue();
+                $diterima_smt = $_sheet->getCell('P' . $b)->getCalculatedValue();
+                $ijazah_no = $_sheet->getCell('Q' . $b)->getCalculatedValue();
+                $ijazah_thn = $_sheet->getCell('R' . $b)->getCalculatedValue();
+                $skhun_no = $_sheet->getCell('S' . $b)->getCalculatedValue();
+                $skhun_thn = $_sheet->getCell('T' . $b)->getCalculatedValue();
+                $ortu_ayah = $_sheet->getCell('U' . $b)->getCalculatedValue();
+                $ortu_ibu = $_sheet->getCell('V' . $b)->getCalculatedValue();
+                $ortu_alamat = $_sheet->getCell('W' . $b)->getCalculatedValue();
+                $ortu_notelp = $_sheet->getCell('X' . $b)->getCalculatedValue();
+                $ortu_ayah_pkj = $_sheet->getCell('Y' . $b)->getCalculatedValue();
+                $ortu_ibu_pkj = $_sheet->getCell('Z' . $b)->getCalculatedValue();
+                $wali = $_sheet->getCell('AA' . $b)->getCalculatedValue();
+                $wali_alamat = $_sheet->getCell('AB' . $b)->getCalculatedValue();
+                $notelp_rumah = $_sheet->getCell('AC' . $b)->getCalculatedValue();
+                $wali_pkj = $_sheet->getCell('AD' . $b)->getCalculatedValue();
 
                 if ($nis != "" || $nisn != "" || $nama != "") {
                     $data[] = "('$nis', '$nisn', '$nama', '$jk', '$tmp_lahir', '$tgl_lahir', '$agama', '$status', '$anakke', '$alamat', '$notelp', '$sek_asal', '$sek_asal_alamat', '$diterima_kelas', '$diterima_tgl', '$diterima_smt', '$ijazah_no', '$ijazah_thn', '$skhun_no', '$skhun_thn', '$ortu_ayah', '$ortu_ibu', '$ortu_alamat', '$ortu_notelp', '$ortu_ayah_pkj', '$ortu_ibu_pkj', '$wali', '$wali_alamat', '$notelp_rumah', '$wali_pkj')";
@@ -268,27 +323,26 @@ class Data_siswa extends CI_Controller {
 
             $strq = "INSERT INTO m_siswa (nis, nisn, nama, jk, tmp_lahir, tgl_lahir, agama, status, anakke, alamat, notelp, sek_asal, sek_asal_alamat, diterima_kelas, diterima_tgl, diterima_smt, ijazah_no, ijazah_thn, skhun_no, skhun_thn, ortu_ayah, ortu_ibu, ortu_alamat, ortu_notelp, ortu_ayah_pkj, ortu_ibu_pkj, wali, wali_alamat, notelp_rumah, wali_pkj) VALUES ";
 
-            $strq .= implode(",", $data).";";
-            
+            $strq .= implode(",", $data) . ";";
+
             $this->db->query($strq);
 
             @unlink('./upload/temp/import_siswa.xls');
-            
-            $this->session->set_flashdata('k', '<div class="alert alert-success">'.($no-1).' siswa berhasil diupload</div>');
-            redirect('data_siswa/upload');
 
+            $this->session->set_flashdata('k', '<div class="alert alert-success">' . ($no - 1) . ' siswa berhasil diupload</div>');
+            redirect('data_siswa/upload');
         } else {
-            exit('Buka File Excel...');//pesan error tipe file tidak tepat
+            exit('Buka File Excel...'); //pesan error tipe file tidak tepat
         }
         redirect('m_siswa/index/');
     }
 
-    public function index() {
+    public function index()
+    {
         $prefix = $this->config->item('session_name_prefix');
-        if ($this->session->userdata($prefix."user") == "admin") {
+        if ($this->session->userdata($prefix . "user") == "admin") {
             $this->d['p'] = "list";
             $this->load->view("template_utama", $this->d);
         }
     }
-
 }
